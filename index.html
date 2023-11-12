@@ -6,16 +6,24 @@
     <title>lucky</title>
 </head>
 <body>
-    <div>输入牛奶和淡奶油混合液重量：<input id="i1" type="number"></div>
-    <div>预计做多少个椰子冻的量：<input id="i2" type="number"></div>
-    <div><button onClick="calculate">点我计算</button></div>
+    <div>输入牛奶和淡奶油混合液重量：<input value="0" id="i1" type="number">g</div>
+    <div>预计做多少个椰子冻的量：<input value="10" id="i2" type="number">个</div>
+    <div><button onClick="calculate()">点我计算</button></div>
+
+    <div id="result"></div>
 
 
-
-
-<script>
-    const calculate = ()=>{
-        alert('gg')
+<script >
+    const i1 = document.querySelector('#i1');
+    const i2 = document.querySelector('#i2');
+    const result = document.querySelector('#result');
+    const base = {milk:105, cream: 25, sugar: 7.5, water: 125, jld: 1 }
+     calculate = ()=>{
+        let milk = i1.value * 0.8
+        let cream = i1.value * 0.2, n = i2.value;
+        console.log(n, n*base.milk - milk,n*base.cream - cream)
+        let str = `需再加入：牛奶=${n*base.milk - milk}克(g) 淡奶油=${n*base.cream - cream}克(g) 椰子水=${n*base.water}克(g) 吉利丁片=${n*base.jld}片`
+        result.innerHTML = str
     }
 </script>
 </body>
