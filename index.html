@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>lucky</title>
     <style>
-        div{
-            margin:50px 10px;
+        div {
+            margin: 50px 10px;
         }
     </style>
 </head>
+
 <body>
     <div>输入牛奶和淡奶油混合液重量：<input style="width: 90px" value="0" id="i1" type="number">g</div>
     <div>预计做多少个椰子冻的量：<input value="10" style="width: 100px" id="i2" type="number">个</div>
@@ -18,18 +20,35 @@
     <div id="result"></div>
 
 
-<script >
-    const i1 = document.querySelector('#i1');
-    const i2 = document.querySelector('#i2');
-    const result = document.querySelector('#result');
-    const base = {milk:105, cream: 25, sugar: 7.5, water: 125, jld: 1 }
-     calculate = ()=>{
-        let milk = i1.value * 0.8
-        let cream = i1.value * 0.2, n = i2.value;
-        console.log(n, n*base.milk - milk,n*base.cream - cream)
-        let str = `需再加入：牛奶=${n*base.milk - milk}克(g) 淡奶油=${n*base.cream - cream}克(g) 椰子水=${n*base.water}克(g) 糖=${n*base.sugar}克(g) 吉利丁片=${n*base.jld}片`
-        result.innerHTML = str
-    }
-</script>
+    <label for="pet-select">椰奶万能配方:</label>
+    <div>中杯= 牛奶113g，淡奶油28g,椰子水最后加到对应刻度线</div>
+    <div>大杯= 牛奶153g，淡奶油38g,椰子水最后加到对应刻度线</div>
+    <label for="pet-select">酸奶万能配方:</label>
+    <div>中杯= 牛奶121g，淡奶油30g,椰浆45g,蒙马酸奶最后加到对应刻度线</div>
+    <div>大杯= 牛奶165g，淡奶油41g,椰浆62g,蒙马酸奶最后加到对应刻度线</div>
+    <!-- <select name="pets" id="pet-select">
+        <option value="">--Please choose an option--</option>
+        <option value="dog">sheng ye</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+    </select> -->
+
+    <script>
+        const i1 = document.querySelector('#i1');
+        const i2 = document.querySelector('#i2');
+        const result = document.querySelector('#result');
+        const base = { milk: 105, cream: 25, sugar: 7.5, water: 125, jld: 1 }
+        calculate = () => {
+            let milk = i1.value * 0.8
+            let cream = i1.value * 0.2, n = i2.value;
+            console.log(n, n * base.milk - milk, n * base.cream - cream)
+            let str = `需再加入：牛奶=${n * base.milk - milk}克(g) 淡奶油=${n * base.cream - cream}克(g) 椰子水=${n * base.water}克(g) 糖=${n * base.sugar}克(g) 吉利丁片=${n * base.jld}片`
+            result.innerHTML = str
+        }
+    </script>
 </body>
+
 </html>
