@@ -34,7 +34,7 @@
 
         <h2>WebRTC录制视频示例</h2>
 
-        <video id="v1" playsinline autoplay muted></video>
+        <video id="v1" style="width:100%;height:100%" playsinline autoplay muted></video>
         <video id="v2" playsinline loop></video>
 
         <div>
@@ -103,7 +103,7 @@ startCameraBtn.addEventListener('click', async () => {
       echoCancellation: { exact: isEchoCancellation }
     },
     video: {
-      width: 1280, height: 720
+      width: 320, height: 360
     }
   };
   // 在某些手机上，这个配置可能会有问题
