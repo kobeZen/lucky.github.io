@@ -1,256 +1,54 @@
-
 <!DOCTYPE html>
-<!--
- *  an.rustfisher.com
- *
- *  WebRTC示例，录制视频
--->
-<html>
+<html lang="en">
 
 <head>
-
-    <meta charset="utf-8">
-    <meta name="description" content="WebRTC录制视频示例">
-    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
-    <meta itemprop="description" content="网页端，WebRTC录制视频">
-    <meta itemprop="image" content="../../../about/about/favicon.ico">
-    <meta itemprop="name" content="WebRTC录制视频">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta id="theme-color" name="theme-color" content="#ffffff">
-
-    <base target="_blank">
-
-    <title>WebRTC录制视频示例|rustfisher</title>
-
-    <link rel="icon" sizes="192x192" href="../../../about/about/favicon.ico">
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="css/main.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lucky</title>
+    <style>
+        div {
+            margin: 50px 10px;
+        }
+    </style>
 </head>
 
 <body>
+    <div>输入牛奶和淡奶油混合液重量：<input style="width: 90px" value="0" id="i1" type="number">g</div>
+    <div>预计做多少个椰子冻的量：<input value="10" style="width: 100px" id="i2" type="number">个</div>
+    <div><button onClick="calculate()">点我计算</button></div>
 
-    <div id="container">
+    <div id="result"></div>
 
-        <h2>WebRTC录制视频示例</h2>
 
-        <video id="v1" style="width:100%;height:100%; objectFit: fill" playsinline autoplay muted></video>
-        <video id="v2" playsinline loop></video>
+    <label for="pet-select">椰奶万能配方:</label>
+    <div>中杯= 牛奶113g，淡奶油28g,椰子水最后加到对应刻度线</div>
+    <div>大杯= 牛奶153g，淡奶油38g,椰子水最后加到对应刻度线</div>
+    <label for="pet-select">酸奶万能配方:</label>
+    <div>中杯= 牛奶121g，淡奶油30g,椰浆45g,蒙马酸奶最后加到对应刻度线</div>
+    <div>大杯= 牛奶165g，淡奶油41g,椰浆62g,蒙马酸奶最后加到对应刻度线</div>
+    <!-- <select name="pets" id="pet-select">
+        <option value="">--Please choose an option--</option>
+        <option value="dog">sheng ye</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+    </select> -->
 
-        <div>
-            <button id="startCamera">开启摄像头</button>
-            <button id="stopCamera">停止摄像头</button>
-            <button id="record" disabled>录制</button>
-            <button id="play" disabled>播放</button>
-            <button id="download" disabled>下载视频</button>
-        </div>
-
-        <div>
-            录制使用的视频格式: <select id="codecSelect" disabled></select>
-        </div>
-        <div>
-            <h4>视频设置</h4>
-            <p>回声消除: <input type="checkbox" id="echoCancellation"></p>
-        </div>
-
-        <div>
-            <span id="msg" style="font-size:smaller"></span>
-        </div>
-
-    <div class="_m47gxn99axh"></div>
-    <script type="text/javascript">
-        (window.slotbydup = window.slotbydup || []).push({
-            id: "u6827338",
-            container: "_m47gxn99axh",
-            async: true
-        });
+    <script>
+        const i1 = document.querySelector('#i1');
+        const i2 = document.querySelector('#i2');
+        const result = document.querySelector('#result');
+        const base = { milk: 105, cream: 25, sugar: 7.5, water: 125, jld: 1 }
+        calculate = () => {
+            let milk = i1.value * 0.8
+            let cream = i1.value * 0.2, n = i2.value;
+            console.log(n, n * base.milk - milk, n * base.cream - cream)
+            let str = `需再加入：牛奶=${n * base.milk - milk}克(g) 淡奶油=${n * base.cream - cream}克(g) 椰子水=${n * base.water}克(g) 糖=${n * base.sugar}克(g) 吉利丁片=${n * base.jld}片`
+            result.innerHTML = str
+        }
     </script>
-    </div>
-
-    <!-- 使用本地的适配器 -->
-    <!-- <script src="../js/adapter-latest.js" async></script> -->
-
-    <script >
-        /*
-*  an.rustfisher.com
-*  Call me AnRFDev
-*/
-'use strict';
-
-console.log("2021-12-16_1705");
-
-let mediaRecorder;
-let recordedBlobs; // 录制下来的内容
-let isRecording = false;
-
-// 先把页面元素拿到
-const startCameraBtn = document.querySelector('button#startCamera'); // 启动摄像头按钮
-const stopCameraBtn = document.querySelector('button#stopCamera');
-const recordBtn = document.querySelector('button#record'); // 开始录制按钮
-const playBtn = document.querySelector('button#play');     // 播放按钮
-const downloadBtn = document.querySelector('button#download'); // 下载视频按钮
-const codecSelector = document.querySelector('#codecSelect'); // 选择格式
-const msgEle = document.querySelector('span#msg');         // 显示消息
-const previewV1 = document.querySelector('video#v1'); // 预览用的
-const recordedV2 = document.querySelector('video#v2');  // 用来播放录制好的视频
-
-// 启动摄像头
-startCameraBtn.addEventListener('click', async () => {
-  startCameraBtn.disabled = true;
-  const isEchoCancellation = document.querySelector('#echoCancellation').checked;
-  const constraints = {
-    audio: {
-      echoCancellation: { exact: isEchoCancellation }
-    },
-    video: {
-      width: 320, height: 360
-    }
-  };
-  // 在某些手机上，这个配置可能会有问题
-  init(constraints);
-});
-
-async function init(constraints) {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    gotStream(stream);
-  } catch (e) {
-    showMsg(`navigator.mediaDevices.getUserMedia error:${e}`);
-  }
-}
-
-function gotStream(stream) {
-  recordBtn.disabled = false;
-  showMsg('拿到了 stream:', stream);
-  window.stream = stream;
-  previewV1.srcObject = stream;
-
-  // 重置
-  var codecOption = codecSelector.lastChild;
-  while (codecOption != null) {
-    codecSelector.removeChild(codecOption);
-    codecOption = codecSelector.lastChild;
-  }
-
-  getSupportedMimeTypes().forEach(mimeType => {
-    const option = document.createElement('option');
-    option.value = mimeType;
-    option.innerText = option.value;
-    codecSelector.appendChild(option);
-  });
-  codecSelector.disabled = false; // 可以进行选择了
-}
-
-stopCameraBtn.addEventListener('click', () => {
-  var stream = previewV1.srcObject;
-  if (stream == null) {
-    return;
-  }
-  const tracks = stream.getTracks();
-  tracks.forEach(function (track) {
-    track.stop();
-  });
-  previewV1.srcObject = null;
-  window.stream = null;
-  codecSelector.disabled = true;
-  startCameraBtn.disabled = false;
-});
-
-recordBtn.addEventListener('click', () => {
-  if (isRecording == false) {
-    startRecording();
-  } else {
-    stopRecording();
-    recordBtn.textContent = '开始录制';
-    playBtn.disabled = false;
-    downloadBtn.disabled = false;
-    codecSelector.disabled = false;
-  }
-});
-
-playBtn.addEventListener('click', () => {
-  const mimeType = codecSelector.options[codecSelector.selectedIndex].value.split(';', 1)[0];
-  const superBuffer = new Blob(recordedBlobs, { type: mimeType });
-  recordedV2.src = null;
-  recordedV2.srcObject = null;
-  recordedV2.src = window.URL.createObjectURL(superBuffer);
-  recordedV2.controls = true;
-  recordedV2.play();
-});
-
-downloadBtn.addEventListener('click', () => {
-  const blob = new Blob(recordedBlobs, { type: 'video/webm' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.style.display = 'none';
-  a.href = url;
-  a.download = '视频_' + new Date().getTime() + '.webm';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  }, 100);
-});
-
-function handleDataAvailable(event) {
-  console.log('handleDataAvailable', event);
-  if (event.data && event.data.size > 0) {
-    recordedBlobs.push(event.data);
-  }
-}
-
-// 找到支持的格式
-function getSupportedMimeTypes() {
-  const possibleTypes = [
-    'video/webm;codecs=vp9,opus',
-    'video/webm;codecs=vp8,opus',
-    'video/webm;codecs=h264,opus',
-    'video/mp4;codecs=h264,aac',
-  ];
-  return possibleTypes.filter(mimeType => {
-    return MediaRecorder.isTypeSupported(mimeType);
-  });
-}
-
-function startRecording() {
-  recordedBlobs = [];
-  const mimeType = codecSelector.options[codecSelector.selectedIndex].value;
-  const options = { mimeType };
-
-  try {
-    mediaRecorder = new MediaRecorder(window.stream, options);
-  } catch (e) {
-    showMsg(`创建MediaRecorder出错: ${JSON.stringify(e)}`);
-    return;
-  }
-
-  showMsg('创建MediaRecorder', mediaRecorder, ' -> options', options);
-  recordBtn.textContent = '停止录制';
-  isRecording = true;
-  playBtn.disabled = true;
-  downloadBtn.disabled = true;
-  codecSelector.disabled = true;
-  mediaRecorder.onstop = (event) => {
-    showMsg('录制停止了: ' + event);
-    showMsg('录制的数据Blobs: ' + recordedBlobs);
-  };
-  mediaRecorder.ondataavailable = handleDataAvailable;
-  mediaRecorder.start();
-  showMsg('录制开始 mediaRecorder: ' + mediaRecorder);
-}
-
-function stopRecording() {
-  mediaRecorder.stop();
-}
-
-function showMsg(msg) {
-  console.log(msg);
-  msgEle.innerHTML += "<p>" + msg + "</p>";
-}
-    </script>
-
-
 </body>
 
 </html>
