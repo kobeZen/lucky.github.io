@@ -5,64 +5,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>lucky-price</title>
-    <style>
-        div {
-            margin: 50px 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="bulma.css">
+
 </head>
 
 <body>
 
-    <div>输入牛奶和淡奶油混合液重量：<input style="width: 90px" value="0" id="i1" type="number">g</div>
-    <div>输入兑好椰奶混合液重量：<input style="width: 90px" value="0" id="i3" type="number">g</div>
-    <div>预计做多少个椰子冻的量：<input value="10" style="width: 100px" id="i2" type="number">个</div>
-    <div><button onClick="calculate()">辅料椰子冻</button></div>
-    <div><button onClick="calculateK()">带壳椰子冻</button></div>
+    <section class="section">
+        <div class="container">
+            <div class="notification is-primary">
+                This container is <strong>centered</strong> on desktop and larger viewports.
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><abbr title="Position">Pos</abbr></th>
+                    <th>名称</th>
+                    <th>尺寸</th>
+                    <th><abbr title="">数量</abbr></th>
+                    <th><abbr title="">单位</abbr></th>
+                    <th><abbr title="Drawn">价格（元）</abbr></th>
+                </tr>
+            </thead>
+            <tfoot>
 
-    <div id="result"></div>
+            </tfoot>
+            <tbody>
 
 
-    <label for="pet-select">椰奶万能配方:</label>
-    <div>中杯= 牛奶113g，淡奶油28g,椰子水最后加到对应刻度线</div>
-    <div>大杯= 牛奶153g，淡奶油38g,椰子水最后加到对应刻度线</div>
-    <label for="pet-select">酸奶万能配方:</label>
-    <div>中杯= 牛奶121g，淡奶油30g,椰浆45g,蒙马酸奶最后加到对应刻度线</div>
-    <div>大杯= 牛奶165g，淡奶油41g,椰浆62g,蒙马酸奶最后加到对应刻度线</div>
- 
-    <div>预计调椰奶的量：<input value="2000" style="width: 100px" id="i4" type="number">g</div>
-    <div><button onClick="calculateY()">点我计算椰奶</button></div>
+            </tbody>
+        </table>
+    </section>
+    <nav class="level">
+        <div class="level-item has-text-centered">
+          <div>
+            <p style="font-size: 30px;" class="heading">$</p>
+            <p class="title total"></p>
+          </div>
+        </div>
+      </nav>
+    <section class="section">
+        <div class="container">
+            <div id="wrap" class="notification is-primary">
 
-    <div id="result1"></div>
+            </div>
+        </div>
+    </section>
     <script>
-        const i1 = document.querySelector('#i1');
-        const i2 = document.querySelector('#i2');
-        const i3 = document.querySelector('#i3');
-        const i4 = document.querySelector('#i4');
-        const result = document.querySelector('#result');
-        const result1 = document.querySelector('#result1');
-        const base = { milk: 105, cream: 25, sugar: 8.2, water: 125, jld: 1 }
-        const base1 = { milk: 0.320, cream: 0.08,water: 0.6 }
-        const base2 = { milk: 115, cream: 50, sugar: 9.1, water: 90, jld: 1 }
-        calculate = () => {
-            let milk = i1.value * 0.8+i3.value * 0.32
-            let water = i3.value * 0.6
-            let cream = i1.value * 0.2+i3.value * 0.08, n = i2.value;
-            console.log(n, n * base.milk - milk, n * base.cream - cream)
-            let str = `需再加入：牛奶=${n * base.milk - milk}克(g) 雀巢淡奶油=${n * base.cream - cream}克(g) 椰子水=${n * base.water-water}克(g) 糖=${n * base.sugar}克(g) 吉利丁片=${n * base.jld}片`
-            result.innerHTML = str
+        const headArr = ['']
+        const content = document.querySelector('tbody');
+        const list_wrap = document.querySelector('#wrap');
+        const total = document.querySelector('.total');
+
+        const datas = [
+            { id: 1, name: '小料盒', type: '', price: '0.42', unit: '个' },
+            { id: 2, name: '杯套', type: '中杯', price: '0.23', unit: '个' },
+            { id: 3, name: '杯套', type: '大杯', price: '0.23', unit: '个' },
+            { id: 4, name: '保温袋', type: '小', price: '0.68', unit: '个' },
+            { id: 5, name: '保温袋', type: '中', price: '0.76', unit: '个' },
+        ]
+
+        let lists = []
+        const update = () => {
+            let str = ''
+            lists.map((item, index) => {
+                str += `<div class="card">
+                          <div class="card-content"><span class="tag is-warning">${item.name}<button id="${item.id}" class="delete is-small"></button></span>
+                            <span class="tag is-warning">${item.type}</span>
+                            <input
+                            class="input is-small is-primary"
+                            data-id="${item.id}"
+                            data-price="${item.price}"
+                            data-name="${item.name}"
+                            data-type="${item.type}"
+                            data-unit="${item.unit}"
+                            type="text"
+                            style="max-width:50px"
+                            placeholder="多少"
+                            />${item.unit}</div>
+                        </div>`
+            })
+            list_wrap.innerHTML = str
+            let ll = list_wrap.querySelectorAll('input')
+            console.log(ll)
+            list_wrap.querySelectorAll('input').forEach((ele)=>{
+                ele.addEventListener("change", (event) => {
+                    let input = event.target.value
+                    calc()
+                });
+            })
         }
-        calculateK = () => {
-            let milk = i1.value * 0.8+i3.value * 0.32
-            let water = i3.value * 0.6
-            let cream = i1.value * 0.2+i3.value * 0.08, n = i2.value;
-            let str = `需再加入：牛奶=${n * base2.milk - milk}克(g) 发喜淡奶油=${n * base2.cream - cream}克(g) 椰子水=${n * base2.water-water}克(g) 糖=${n * base2.sugar}克(g) 吉利丁片=${n * base2.jld}片`
-            result.innerHTML = str
+        const calc = () => {
+           let all = list_wrap.querySelectorAll('input'), amount=0;
+            all.forEach((ele)=>{
+                if(ele.value && ele.value >0){
+                    amount+=ele.value*ele.getAttribute('data-price')
+                }
+            })
+            total.innerHTML = amount.toFixed(2)+'元'
+            
         }
-        calculateY = () => {
-            let y = i4.value
-            let str = `需加入：牛奶=${y * base1.milk}克(g) 雀巢淡奶油=${y * base1.cream}克(g) 椰子水=${y * base1.water}克(g)`
-            result1.innerHTML = str
+
+        const addItem = (id) => {
+            let list = datas.find((item) => {
+                return 'item_' + item.id == id
+            })
+
+
+            lists.push({
+                ...list,
+
+            })
+            update()
+        }
+        let str = ''
+        datas.map((item, index) => {
+            str += `<tr>
+                    <th>${index}</th>
+                    <td>${item.name}</td>
+                    <td>${item.type}</td>
+                    <td>1</td>
+                    <td>${item.unit}</td>
+                    <td>${item.price}</td>
+                    <td><button id='item_${item.id}'  class="button is-primary">添加</button></td>
+                    
+                </tr>`
+        })
+        content.innerHTML = str
+        content.onclick = (e) => {
+            let ele = e.target
+            if (ele.className == "button is-primary") {
+                addItem(ele.id)
+            }
         }
     </script>
 </body>
