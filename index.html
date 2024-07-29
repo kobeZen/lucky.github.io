@@ -19,7 +19,7 @@
     <div>预计做多少个椰子冻的量：<input value="10" style="width: 100px" id="i2" type="number">个</div>
     <div><button onClick="calculate()">辅料椰子冻</button></div>
     <div><button onClick="calculateK()">带壳椰子冻</button></div>
-
+    <div><button onClick="calculateXH()">带壳椰子冻(徐汇店专用)</button></div>
     <div id="result"></div>
 
 
@@ -44,6 +44,7 @@
         const base = { milk: 105, cream: 25, sugar: 8.2, water: 125, jld: 1 }
         const base1 = { milk: 0.320, cream: 0.08,water: 0.6 }
         const base2 = { milk: 115, cream: 50, sugar: 10, water: 90, jld: 1 }
+        const base3 = { milk: 80, cream: 25, sugar: 7.5, water: 150, jld: 1 }
         calculate = () => {
             let milk = i1.value * 0.8+i3.value * 0.32
             let water = i3.value * 0.6
@@ -57,6 +58,13 @@
             let water = i3.value * 0.6
             let cream = i1.value * 0.2+i3.value * 0.08, n = i2.value;
             let str = `需再加入：牛奶=${n * base2.milk - milk}克(g) 发喜淡奶油=${n * base2.cream - cream}克(g) 椰子水=${n * base2.water-water}克(g) 糖=${n * base2.sugar}克(g) 吉利丁片=${n * base2.jld}片`
+            result.innerHTML = str
+        }
+        calculateXH = () => {
+            let milk = i1.value * 0.8+i3.value * 0.32
+            let water = i3.value * 0.6
+            let cream = i1.value * 0.2+i3.value * 0.08, n = i2.value;
+            let str = `需再加入：牛奶=${n * base3.milk - milk}克(g) 发喜淡奶油=${n * base3.cream - cream}克(g) 椰子水=${n * base3.water-water}克(g) 糖=${n * base3.sugar}克(g) 吉利丁片=${n * base3.jld}片`
             result.innerHTML = str
         }
         calculateY = () => {
