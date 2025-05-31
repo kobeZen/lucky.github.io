@@ -1,35 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lucky</title>
-    <style>
-        div{
-            margin:50px 10px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>椰子冻计算器</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f6f9fc;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      margin-top: 60px;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-width: 420px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #00c2a8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #00a58d;
+    }
+
+    #result {
+      margin-top: 25px;
+      padding: 15px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #333;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
-    <div>输入牛奶和淡奶油混合液重量：<input style="width: 90px" value="0" id="i1" type="number">g</div>
-    <div>预计做多少个椰子冻的量：<input value="10" style="width: 100px" id="i2" type="number">个</div>
-    <div><button onClick="calculate()">点我计算</button></div>
+  <div class="container">
+    <h1>椰子冻用料计算器</h1>
+
+    <div class="form-group">
+      <label for="i1">已混合的牛奶和淡奶油总重量(g)</label>
+      <input id="i1" type="number" value="0" />
+    </div>
+
+    <div class="form-group">
+      <label for="i2">预计制作的椰子冻数量（个）</label>
+      <input id="i2" type="number" value="10" />
+    </div>
+
+    <button onclick="calculate()">点我计算</button>
 
     <div id="result"></div>
+  </div>
 
-
-<script >
+  <script>
     const i1 = document.querySelector('#i1');
     const i2 = document.querySelector('#i2');
     const result = document.querySelector('#result');
-    const base = {milk:105, cream: 25, sugar: 7.5, water: 125, jld: 1 }
-     calculate = ()=>{
-        let milk = i1.value * 0.8
-        let cream = i1.value * 0.2, n = i2.value;
-        console.log(n, n*base.milk - milk,n*base.cream - cream)
-        let str = `需再加入：牛奶=${n*base.milk - milk}克(g) 淡奶油=${n*base.cream - cream}克(g) 椰子水=${n*base.water}克(g) 糖=${n*base.sugar}克(g) 吉利丁片=${n*base.jld}片`
-        result.innerHTML = str
+
+    const base = {
+      milk: 105,
+      cream: 25,
+      sugar: 7.5,
+      water: 125,
+      jld: 1
+    };
+
+    function calculate() {
+      const totalInput = parseFloat(i1.value) || 0;
+      const count = parseInt(i2.value) || 0;
+
+      const milk = totalInput * 0.8;
+      const cream = totalInput * 0.2;
+
+      const extraMilk = (count * base.milk - milk).toFixed(1);
+      const extraCream = (count * base.cream - cream).toFixed(1);
+      const water = (count * base.water).toFixed(1);
+      const sugar = (count * base.sugar).toFixed(1);
+      const jld = (count * base.jld).toFixed(1);
+
+      result.innerHTML = `
+        👉 还需加入：<br/>
+        - 牛奶：<strong>${extraMilk}</strong> 克<br/>
+        - 淡奶油：<strong>${extraCream}</strong> 克<br/>
+        - 椰子水：<strong>${water}</strong> 克<br/>
+        - 糖：<strong>${sugar}</strong> 克<br/>
+        - 吉利丁片：<strong>${jld}</strong> 片
+      `;
     }
-</script>
+  </script>
 </body>
 </html>
